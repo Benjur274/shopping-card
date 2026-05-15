@@ -1,38 +1,227 @@
-.App {
-  text-align: center;
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
+body {
   min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  display: flex;
+  justify-content: center;
+  padding: 48px 16px;
+}
+
+#root {
+  width: 100%;
+  max-width: 460px;
+  align-self: flex-start;
+}
+
+/* ── Card ── */
+.app {
+  width: 100%;
+}
+
+.card {
+  background: #fff;
+  border-radius: 24px;
+  padding: 32px;
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.45);
+}
+
+/* ── Header ── */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.header-icon {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.header h1 {
+  flex: 1;
+  font-size: 22px;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.3px;
+}
+
+.saving-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #6366f1;
+  animation: blink 1.2s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.3; transform: scale(0.75); }
+}
+
+/* ── Input ── */
+.input-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.text-input {
+  flex: 1;
+  padding: 11px 14px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 15px;
+  font-family: inherit;
+  color: #111827;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.text-input::placeholder { color: #9ca3af; }
+.text-input:focus        { border-color: #6366f1; }
+
+.add-btn {
+  padding: 11px 18px;
+  background: #6366f1;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, transform 0.1s, opacity 0.15s;
+}
+
+.add-btn:hover:not(:disabled) { background: #4f46e5; }
+.add-btn:active:not(:disabled) { transform: scale(0.96); }
+.add-btn:disabled { opacity: 0.35; cursor: default; }
+
+/* ── State messages ── */
+.state-msg {
+  text-align: center;
+  color: #9ca3af;
+  font-size: 14px;
+  padding: 28px 0 8px;
+}
+
+/* ── List ── */
+.list {
+  list-style: none;
   display: flex;
   flex-direction: column;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 6px;
+  border-radius: 10px;
+  transition: background 0.12s;
+}
+
+.item:hover { background: #f9fafb; }
+
+/* ── Checkbox ── */
+.check {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid #d1d5db;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.15s;
+  position: relative;
+  padding: 0;
+}
+
+.check:hover { border-color: #6366f1; }
+
+.check.checked {
+  background: #6366f1;
+  border-color: #6366f1;
+}
+
+.check.checked::after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 2px;
+  width: 6px;
+  height: 10px;
+  border: 2px solid #fff;
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg);
+}
+
+/* ── Item text ── */
+.item-text {
+  flex: 1;
+  font-size: 15px;
+  color: #1f2937;
+  word-break: break-word;
+}
+
+.item.done .item-text {
+  text-decoration: line-through;
+  color: #9ca3af;
+}
+
+/* ── Remove button ── */
+.remove {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border: none;
+  background: transparent;
+  color: #d1d5db;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 6px;
+  display: flex;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  padding: 0;
+  opacity: 0;
+  transition: all 0.12s;
 }
 
-.App-link {
-  color: #61dafb;
+.item:hover .remove { opacity: 1; }
+.remove:hover {
+  color: #ef4444;
+  background: #fef2f2;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* always visible on touch screens */
+@media (hover: none) {
+  .remove { opacity: 1; }
+}
+
+/* ── Done section ── */
+.done-section {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #f3f4f6;
+}
+
+.done-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #9ca3af;
+  margin-bottom: 4px;
+  padding: 0 6px;
 }
