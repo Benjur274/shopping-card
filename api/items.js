@@ -30,6 +30,7 @@ module.exports = async function handler(req, res) {
       // 2. Vytvor nový blob (unikátna URL, žiadna CDN cache)
       await put('shopping-list.json', JSON.stringify(items), {
         access: 'public',
+        addRandomSuffix: true,
         contentType: 'application/json',
       });
 
