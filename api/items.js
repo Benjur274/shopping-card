@@ -1,6 +1,4 @@
-const { put, list } = require('@vercel/blob');
-
-const BLOB_KEY = 'shopping-list.json';
+const { put, list, del } = require('@vercel/blob');
 
 module.exports = async function handler(req, res) {
   if (req.method === 'GET') {
@@ -9,7 +7,11 @@ module.exports = async function handler(req, res) {
       if (blobs.length === 0) {
         return res.status(200).json([]);
       }
-      const response = await fetch(blobs[0].url, { cache: 'no-store' });
+      // Najnovší blob (unikátna URL = žiadna CDN cache)
+      const latest = blobs.sort(
+        (a, b) => new Date(b.uploadedAt) - new Date(a.uploadedAt)
+      )[0];
+      const response = await fetch(latest.url);
       const items = await response.json();
       return res.status(200).json(items);
     } catch {
@@ -21,12 +23,18 @@ module.exports = async function handler(req, res) {
     try {
       const items = req.body;
 
-      await put(BLOB_KEY, JSON.stringify(items), {
+      // Vytvor nový blob s unikátnou URL (addRandomSuffix: true = default)
+      const newBlob = await put('shopping-list.json', JSON.stringify(items), {
         access: 'public',
-        addRandomSuffix: false,
-        allowOverwrite: true,
         contentType: 'application/json',
       });
+
+      // Zmaž všetky staré bloby (okrem práve vytvoreného)
+      const { blobs } = await list({ prefix: 'shopping-list' });
+      const old = blobs.filter((b) => b.url !== newBlob.url);
+      if (old.length > 0) {
+        await del(old.map((b) => b.url));
+      }
 
       return res.status(200).json({ ok: true });
     } catch (e) {
