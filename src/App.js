@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import './App.css';
+import Background from './Background';
 
 function App() {
   const [items, setItems] = useState([]);
@@ -76,6 +77,8 @@ function App() {
   const doneItems = items.filter((i) => i.done);
 
   return (
+    <>
+    <Background />
     <div className="app">
       <div className="card">
         <div className="header">
@@ -160,6 +163,7 @@ function App() {
         )}
       </div>
     </div>
+    </>
   );
 }
 
