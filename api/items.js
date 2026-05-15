@@ -1,4 +1,4 @@
-const { put, list, del } = require('@vercel/blob');
+const { put, list } = require('@vercel/blob');
 
 const BLOB_KEY = 'shopping-list.json';
 
@@ -9,7 +9,7 @@ module.exports = async function handler(req, res) {
       if (blobs.length === 0) {
         return res.status(200).json([]);
       }
-      const response = await fetch(blobs[0].url);
+      const response = await fetch(blobs[0].url, { cache: 'no-store' });
       const items = await response.json();
       return res.status(200).json(items);
     } catch {
@@ -21,15 +21,10 @@ module.exports = async function handler(req, res) {
     try {
       const items = req.body;
 
-      // Delete old blob and write fresh one
-      const { blobs } = await list({ prefix: 'shopping-list' });
-      if (blobs.length > 0) {
-        await del(blobs.map((b) => b.url));
-      }
-
       await put(BLOB_KEY, JSON.stringify(items), {
         access: 'public',
         addRandomSuffix: false,
+        allowOverwrite: true,
         contentType: 'application/json',
       });
 

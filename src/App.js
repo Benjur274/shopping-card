@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './App.css';
 
 function App() {
@@ -8,7 +8,7 @@ function App() {
   const [saving, setSaving] = useState(false);
   const inputRef = useRef(null);
 
-  const fetchItems = useCallback(async () => {
+  const fetchItems = async () => {
     try {
       const res = await fetch('/api/items');
       const data = await res.json();
@@ -18,7 +18,7 @@ function App() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  };
 
   const saveItems = async (newItems) => {
     setSaving(true);
@@ -37,9 +37,7 @@ function App() {
 
   useEffect(() => {
     fetchItems();
-    const interval = setInterval(fetchItems, 5000);
-    return () => clearInterval(interval);
-  }, [fetchItems]);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const addItem = async () => {
     const text = inputText.trim();
